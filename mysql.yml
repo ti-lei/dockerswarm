@@ -28,7 +28,7 @@ version: "3"
       placement:
         constraints: [node.labels.mysql == true]
     networks:
-        - overlay
+        - layx
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.0
@@ -48,7 +48,7 @@ version: "3"
     depends_on:
       - mysql
     networks:
-      - overlay
+      - layx
 
 networks:
   layx:
