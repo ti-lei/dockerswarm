@@ -1,0 +1,180 @@
+version: "3.8"
+
+services:
+  flask:
+    image: lay9412206/finmind_flask:1.0
+    build:
+      context: .
+      dockerfile: ./env/flask/Dockerfile
+    command: tail -f /dev/null
+    environment:
+      - TZ=Asia/Taipei
+      - DEBIAN_FRONTEND=noninteractive
+      - PYTHONPATH=/usr/local/bin/python
+    volumes:
+      - ./:/app
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+    # env_file:
+    #   - .env
+
+    working_dir: /app
+    networks:
+      - layx
+
+  api:
+    image: finmind_flask
+    # build: 
+    #   context: .
+    #   dockerfile: ./env/api/Dockerfile
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8888
+    environment:
+      - TZ=Asia/Taipei
+      - DEBIAN_FRONTEND=noninteractive
+      - PYTHONPATH=/usr/local/bin/python
+    volumes:
+      - ./:/app
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+    working_dir: /app
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.labels.api == true]
+    ports:
+      - 8888:8888
+
+    # hostname: "api"
+    restart: always
+    networks:
+      - layx
+
+
+  scheduler:
+    image: finmind_flask
+    hostname: "twse"
+    command: python financialdata/scheduler.py
+    restart: always
+    environment:
+      - TZ=Asia/Taipei
+    networks:
+      - layx
+    volumes:
+      - ./:/app
+    working_dir: /app
+
+
+  crawler_twse:
+    image: finmind_flask
+    hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    # 啟動 worker 指令
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      placement:
+        # 設定, 最多只能啟動一個 services 在 node 中
+        # 如果一個 node 啟動兩個以上的 crawler_twse 工人
+        # 等於同時用這台 node 的 IP, 對證交所連續爬蟲
+        # 會被 ban
+        max_replicas_per_node: 1
+        # 設定 node 的 label, 只會在
+        # 有設定 label crawler_twse = true 的機器上
+        # 啟動該 services
+        constraints: [node.labels.crawler_twse == true]
+    command: celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q twse
+    restart: always
+    environment:
+      - TZ=Asia/Taipei
+    networks:
+        - layx
+
+  crawler_tpex:
+    image: finmind_flask
+    hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    # 啟動 worker 指令
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      placement:
+        # 設定, 最多只能啟動一個 services 在 node 中
+        # 如果一個 node 啟動兩個以上的 crawler_tpex 工人
+        # 等於同時用這台 node 的 IP, 對證交所連續爬蟲
+        # 會被 ban
+        max_replicas_per_node: 1
+        # 設定 node 的 label, 只會在
+        # 有設定 label crawler_tpex = true 的機器上
+        # 啟動該 services
+        constraints: [node.labels.crawler_tpex == true]
+    command: celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q tpex
+    restart: always
+    environment:
+      - TZ=Asia/Taipei
+    networks:
+        - layx
+
+  crawler_taifex:
+    image: finmind_flask
+    hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    # 啟動 worker 指令
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      placement:
+        # 設定, 最多只能啟動一個 services 在 node 中
+        # 如果一個 node 啟動兩個以上的 crawler_taifex 工人
+        # 等於同時用這台 node 的 IP, 對證交所連續爬蟲
+        # 會被 ban
+        max_replicas_per_node: 1
+        # 設定 node 的 label, 只會在
+        # 有設定 label crawler_taifex = true 的機器上
+        # 啟動該 services
+        constraints: [node.labels.crawler_taifex == true]
+    command: celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q taifex
+    restart: always
+    environment:
+      - TZ=Asia/Taipei
+    networks:
+        - layx
+
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    ports: 
+      # docker publish port 5672/15672 to 5672/15672 
+      # (將 docker 內部 ip 5672/15672, 跟外部 5672/15672 做連結)
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: "worker"
+      RABBITMQ_DEFAULT_PASS: "worker"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    networks:
+      - layx
+
+  flower:
+    image: mher/flower:0.9.5
+    command: ["flower", "--broker=amqp://worker:worker@rabbitmq", "--port=5555"]
+    ports: 
+      # docker publish port 5555 to 5555 
+      # (將 docker 內部 ip 5555, 跟外部 5555 做連結)
+      - 5635:5555
+    depends_on:
+      - rabbitmq
+    networks:
+      - layx
+
+networks:
+  layx:
+    driver: overlay
+
+
+volumes:
+  mysql:
