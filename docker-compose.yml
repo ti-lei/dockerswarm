@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 
 services:
   flask:
@@ -81,7 +81,7 @@ services:
         # 如果一個 node 啟動兩個以上的 crawler_twse 工人
         # 等於同時用這台 node 的 IP, 對證交所連續爬蟲
         # 會被 ban
-        max_replicas_per_node: 1
+        #max_replicas_per_node: 1
         # 設定 node 的 label, 只會在
         # 有設定 label crawler_twse = true 的機器上
         # 啟動該 services
@@ -107,7 +107,7 @@ services:
         # 如果一個 node 啟動兩個以上的 crawler_tpex 工人
         # 等於同時用這台 node 的 IP, 對證交所連續爬蟲
         # 會被 ban
-        max_replicas_per_node: 1
+        #max_replicas_per_node: 1
         # 設定 node 的 label, 只會在
         # 有設定 label crawler_tpex = true 的機器上
         # 啟動該 services
@@ -133,7 +133,7 @@ services:
         # 如果一個 node 啟動兩個以上的 crawler_taifex 工人
         # 等於同時用這台 node 的 IP, 對證交所連續爬蟲
         # 會被 ban
-        max_replicas_per_node: 1
+        #max_replicas_per_node: 1
         # 設定 node 的 label, 只會在
         # 有設定 label crawler_taifex = true 的機器上
         # 啟動該 services
