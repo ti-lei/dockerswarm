@@ -37,7 +37,7 @@ services:
       - PMA_HOST=mysql
       - PMA_PORT=3306
     ports:
-        - 8000:80
+        - 8080:80
 
       # swarm 設定
     deploy:
