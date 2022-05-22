@@ -57,3 +57,4 @@ networks:
 
 volumes:
   mysql-db1:
+    external: true

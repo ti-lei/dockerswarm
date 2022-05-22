@@ -175,6 +175,3 @@ networks:
   layx:
     driver: overlay
 
-
-volumes:
-  mysql:
