@@ -6,7 +6,7 @@ HOME_PATH = "/".join(os.path.abspath(__file__).split("/")[:-1])
 HOST_NAME = socket.gethostname()
 
 local_config = ConfigParser()
-local_config.read("local.ini")
+local_config.read("local.ini",encoding="utf-8")
 if os.environ.get("VERSION", ""):
     section = local_config[os.environ.get("VERSION", "")]
 elif HOST_NAME in local_config:

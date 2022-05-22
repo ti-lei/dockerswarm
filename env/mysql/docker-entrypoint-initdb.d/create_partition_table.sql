@@ -1,3 +1,5 @@
+CREATE DATABASE FinancialData;
+
 CREATE TABLE `FinancialData`.`taiwan_stock_price`(
     `StockID` VARCHAR(10) NOT NULL,
     `TradeVolume` BIGINT NOT NULL,
