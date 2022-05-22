@@ -24,7 +24,7 @@ services:
       - layx
 
   api:
-    image: finmind_flask
+    image: lay9412206/finmind_flask:1.0
     # build: 
     #   context: .
     #   dockerfile: ./env/api/Dockerfile
@@ -54,7 +54,7 @@ services:
 
 
   scheduler:
-    image: finmind_flask
+    image: lay9412206/finmind_flask:1.0
     hostname: "twse"
     command: python financialdata/scheduler.py
     restart: always
@@ -68,7 +68,7 @@ services:
 
 
   crawler_twse:
-    image: finmind_flask
+    image: lay9412206/finmind_flask:1.0
     hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
     # 啟動 worker 指令
     deploy:
@@ -94,7 +94,7 @@ services:
         - layx
 
   crawler_tpex:
-    image: finmind_flask
+    image: lay9412206/finmind_flask:1.0
     hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
     # 啟動 worker 指令
     deploy:
@@ -120,7 +120,7 @@ services:
         - layx
 
   crawler_taifex:
-    image: finmind_flask
+    image: lay9412206/finmind_flask:1.0
     hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
     # 啟動 worker 指令
     deploy:
