@@ -182,5 +182,5 @@ services:
 
 networks:
   layx:
-    driver: overlay
+    external:true
 
