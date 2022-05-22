@@ -39,6 +39,9 @@ services:
       - /etc/timezone:/etc/timezone:ro
 
     working_dir: /app
+
+    env_file:
+      - .env
     deploy:
       mode: replicated
       replicas: 1
@@ -70,6 +73,8 @@ services:
   crawler_twse:
     image: lay9412206/finmind_flask:1.0
     hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    env_file:
+      - .env
     # 啟動 worker 指令
     deploy:
       replicas: 1
@@ -96,6 +101,8 @@ services:
   crawler_tpex:
     image: lay9412206/finmind_flask:1.0
     hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    env_file:
+      - .env
     # 啟動 worker 指令
     deploy:
       replicas: 1
@@ -122,6 +129,8 @@ services:
   crawler_taifex:
     image: lay9412206/finmind_flask:1.0
     hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    env_file:
+      - .env
     # 啟動 worker 指令
     deploy:
       replicas: 1
