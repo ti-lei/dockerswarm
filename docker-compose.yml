@@ -15,7 +15,11 @@ services:
       - ./:/app
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.labels.flask == true]
     # env_file:
     #   - .env
 
