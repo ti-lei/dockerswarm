@@ -96,7 +96,7 @@ services:
     environment:
       - TZ=Asia/Taipei
     networks:
-        - layx
+      - layx
 
   crawler_tpex:
     image: lay9412206/finmind_flask:1.0
@@ -124,7 +124,7 @@ services:
     environment:
       - TZ=Asia/Taipei
     networks:
-        - layx
+      - layx
 
   crawler_taifex:
     image: lay9412206/finmind_flask:1.0
@@ -152,7 +152,7 @@ services:
     environment:
       - TZ=Asia/Taipei
     networks:
-        - layx
+      - layx
 
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
@@ -182,5 +182,5 @@ services:
 
 networks:
   layx:
-    external:true
+    external: true
 

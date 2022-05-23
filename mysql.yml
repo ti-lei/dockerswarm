@@ -53,8 +53,8 @@ services:
 
 networks:
   layx:
-    # driver: overlay
+    external: true
 
 volumes:
   mysql-db1:
-    # external: true
+    external: true
